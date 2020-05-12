@@ -5,7 +5,6 @@ using UnityEngine;
 public class Enemy : Person
 {
     private string dialog;
-    private
 
     /** 2 param constructor.
     */
