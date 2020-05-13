@@ -13,20 +13,24 @@ class Class:
         for p in self.parents:
             str += p + ", "
         str += "\n"
-        str += "Variables: "
+        str += "Variables: \n"
         for v in self.variables:
             if v.access != "":
-                str += v.access + " "
-            str += v.type + " " + v.name + ", "
+                str += "\t" + v.access + " "
+            else:
+                str += "\tprotected "
+            str += v.type + " " + v.name + "\n"
         str += "\n"
-        str += "Methods: "
+        str += "Methods: \n"
         for m in self.methods:
             if m.access != "":
-                str += m.access + " "
+                str += "\t" + m.access + " "
+            else:
+                str += "\tprotected "
             str += m.returntype + " " + m.name + "("
             for p in m.params:
                 str += p.name + ", "
-            str += "), "
+            str += ")\n"
         str += "\n"
         return str
 

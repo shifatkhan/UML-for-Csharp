@@ -25,6 +25,9 @@ def get_class_details(dir, class_obj):
     print ("@Debug: Processing file "+file_path.parts[len(file_path.parts) -1])
 
     with file_path.open() as file_text: # Open said file.
+        searching_var = False # Bool for when we're searching for variables.
+        inside_class = False # Bool that keeps status of whether we're in the class or not.
+
         for line in file_text: # Read each line.
             words = line.split() # All words in one line.
 
@@ -49,13 +52,18 @@ def get_class_details(dir, class_obj):
                             if words[i-1] == "public" or words[i-1] == "private" or words[i-1] == "protected":
                                 temp_var = Variable(words[i+1].replace(";", ""))
                                 temp_var.type = words[i]
-                                temp_var.access = words[i-1]
+                                if i-1 >=0:
+                                    temp_var.access = words[i-1]
+                                else:
+                                    temp_var.access = "protected"
                                 class_obj.variables.append(temp_var)
                             elif words[i-1] != "new":
                                 temp_method = Method(words[i].split("(")[0]) # Method name
                                 temp_method.returntype = words[i-1] # Method return type
                                 if i-2 >= 0:
                                     temp_method.access = words[i-2] # Methods access modifier
+                                else:
+                                    temp_method.access = "protected"
                                 j = i+1
                                 while j < len(words):
                                     if words[j] != ":":
@@ -63,6 +71,33 @@ def get_class_details(dir, class_obj):
                                     j += 1
                                 class_obj.methods.append(temp_method)
 
+                    # Find first opening bracket to state that we're inside the class
+                    if not searching_var and not inside_class and words[i].find("{") != -1:
+                        searching_var = True
+                        inside_class = True
+                        print("@Debug: \t\tSTART VAR SEARCH " + words[i])
+
+                    # Once inside the class, look for all variables.
+                    elif searching_var:
+                        print("",end="")
+                        if words[i].find("{") != -1: # If we find an Opening bracket
+                            searching_var = False
+                            print("@Debug: \t\tEND VAR SEARCH " + words[i])
+                        else:
+                            # Check if word is a datatype
+                            if i+1 < len(words) and not words[i][0].isupper() and words[i] != "public" and words[i] != "private" and words[i] != "protected":
+                                if words[i].find("(") == -1 and words[i+1].find("(") == -1: # Check if it's not something else
+                                    print("@Debug: \t\tFOUND VAR " + words[i+1])
+                                    temp_var = Variable(words[i+1].replace(";", ""))
+                                    temp_var.type = words[i]
+                                    if i-1 >=0:
+                                        temp_var.access = words[i-1]
+                                    else:
+                                        temp_var.access = "protected"
+                                    class_obj.variables.append(temp_var)
+                                break
+        inside_class = False
+    print ("\n")
 
 
 # TESTING------------------------------------------------------------------
