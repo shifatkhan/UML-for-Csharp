@@ -51,12 +51,18 @@ def get_class_details(dir, class_obj):
                                 temp_var.type = words[i]
                                 temp_var.access = words[i-1]
                                 class_obj.variables.append(temp_var)
-                            if words[i-1] != "new":
-                                temp_method = Method(words[i]) #TODO: test with (, and how to remove
-                                temp_method.returntype = words[i-1]
+                            elif words[i-1] != "new":
+                                temp_method = Method(words[i].split("(")[0]) # Method name
+                                temp_method.returntype = words[i-1] # Method return type
                                 if i-2 >= 0:
-                                    temp_method.access = words[i-2]
-                                
+                                    temp_method.access = words[i-2] # Methods access modifier
+                                j = i+1
+                                while j < len(words):
+                                    if words[j] != ":":
+                                        temp_method.params.append(Variable(words[j].replace(",","")))
+                                    j += 1
+                                class_obj.methods.append(temp_method)
+
 
 
 # TESTING------------------------------------------------------------------

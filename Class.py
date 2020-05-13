@@ -18,11 +18,15 @@ class Class:
             if v.access != "":
                 str += v.access + " "
             str += v.type + " " + v.name + ", "
-        str += "Methods: " #TODO: implement methods str
+        str += "\n"
+        str += "Methods: "
         for m in self.methods:
-            if v.access != "":
-                str += v.access + " "
-            str += v.type + " " + v.name + ", "
+            if m.access != "":
+                str += m.access + " "
+            str += m.returntype + " " + m.name + "("
+            for p in m.params:
+                str += p.name + ", "
+            str += "), "
         str += "\n"
         return str
 
@@ -31,6 +35,12 @@ class Variable:
         self.name = name
         self.type = ""
         self.access = ""
+
+    @classmethod
+    def full_init(self, name, type, access):
+        self.name = name
+        self.type = type
+        self.access = access
 
     def __str__(self):
         str = ""
